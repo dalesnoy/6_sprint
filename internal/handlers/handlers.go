@@ -13,12 +13,12 @@ import (
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	if _, err := os.Stat("../index.html"); os.IsNotExist(err) {
+	if _, err := os.Stat("./index.html"); os.IsNotExist(err) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
-	http.ServeFile(w, r, "../index.html")
+	http.ServeFile(w, r, "./index.html")
 
 }
 
