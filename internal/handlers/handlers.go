@@ -2,33 +2,24 @@ package handlers
 
 import (
 	"bytes"
-	"fmt"
+	//"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
-
-	//"time"
+	"time"
 
 	"github.com/Yandex-Practicum/go1fl-sprint6-final/internal/service"
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	f, err := os.Open("../index.html")
-	if err != nil {
-		http.Error(w, "Невозможно открыть файл index.html:", http.StatusInternalServerError)
+	if _, err := os.Stat("../index.html"); os.IsNotExist(err) {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
-	defer f.Close()
-	w.Header().Set("Content-type", "Text/html; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
+	http.ServeFile(w, r, "../index.html")
 
-	if _, err := io.Copy(w, f); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	_, _ = fmt.Print(w)
 }
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
@@ -66,17 +57,17 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 		ext = ".txt"
 	}
 
-	//name := time.Now().UTC().Format("20060102_150405") + ext
-	//path := filepath.Join(".", name)
+	name := time.Now().UTC().Format("20060102_150405") + ext
+	path := filepath.Join(".", name)
 
-	//if err := os.WriteFile(path, []byte(result), 0644); err != nil {
-	//	http.Error(w, "Ошика записи файла:"+err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
+	if err := os.WriteFile(path, []byte(result), 0644); err != nil {
+		http.Error(w, "Ошика записи файла:"+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("content-type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 
-	_, _ = fmt.Fprint(w, result)
+	w.Write([]byte(result))
 
 }

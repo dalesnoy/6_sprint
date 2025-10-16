@@ -26,15 +26,15 @@ func StringConverter(s string) (string, error) {
 	var MorseCharsCounter, TextCharsCounter int
 
 	for _, ch := range s {
-		switch ch {
-		case '.', '-', '/', '·':
-			MorseCharsCounter++
-		case ' ', '\t', '\n', '\r':
 
-		default:
-			if unicode.IsLetter(ch) || unicode.IsDigit(ch) {
-				TextCharsCounter++
-			}
+		morseChars := ".-/·"
+		if strings.ContainsRune(morseChars, ch) {
+			MorseCharsCounter++
+			continue
+		}
+
+		if unicode.IsLetter(ch) || unicode.IsDigit(ch) {
+			TextCharsCounter++
 		}
 	}
 
